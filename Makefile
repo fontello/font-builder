@@ -2,7 +2,11 @@ TTF2EOT_BIN     = ./support/ttf2eot/ttf2eot
 TTFAUTOHINT_BIN = ./support/ttfautohint/frontend/ttfautohint
 
 
-support: $(TTF2EOT_BIN) $(TTFAUTOHINT_BIN)
+support:
+	git submodule init
+	git submodule update
+	$(MAKE) $(TTF2EOT_BIN)
+	$(MAKE) $(TTFAUTOHINT_BIN)
 
 
 $(TTF2EOT_BIN):
@@ -11,10 +15,12 @@ $(TTF2EOT_BIN):
 
 
 $(TTFAUTOHINT_BIN):
-	cd ./support/ttfautohint \
-		&& ./bootstrap \
-		&& ./configure --without-qt \
-		&& $(MAKE)
+	cd ./support/ttfautohint && \
+		git submodule init && \
+		git submodule update && \
+		./bootstrap ; \
+		./configure --without-qt && \
+		make
 
 
 dev-deps:
