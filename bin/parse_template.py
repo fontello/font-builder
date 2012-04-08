@@ -33,8 +33,9 @@ for item in data['glyphs']:
     glyphs.append(glyph_info)
 
 data['glyphs'] = glyphs
+data['css-prefix'] = data['demo']['css_prefix']
 
-chunk_size = int(math.ceil(len(glyphs) / float(data['demo-columns'])))
+chunk_size = int(math.ceil(len(glyphs) / float(data['demo']['columns'])))
 data['columns'] = [{'glyphs': glyphs[i:i + chunk_size]} for i in range(0, len(glyphs), chunk_size)]
 
 template = open(args.template, 'r').read()
