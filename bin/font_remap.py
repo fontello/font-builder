@@ -23,7 +23,6 @@ def get_dups(seq):
 # [(from_code1, to_code1), (from_code2, to_code2), ...]
 def get_remap_config(config):
     def get_remap_item(glyph):
-        name, glyph = glyph.items()[0]
         return (glyph.get('from', glyph['code']), glyph['code'])
     return [get_remap_item(glyph) for glyph in config['glyphs']]
 

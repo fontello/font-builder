@@ -26,8 +26,9 @@ config = """---
 # Format is descriped below.
 #
 #
-# css-prefix: "icon-"             # prefix for css-generated classes
-# demo-columns: 4                 # used for html demo page generation
+# demo:
+#   css_prefix: "icon-"           # prefix for css-generated classes
+#   columns: 4                    # used for html demo page generation
 #
 # font:                           # all vars from here will be used as font
 #                                 # params in fontforge
@@ -59,16 +60,16 @@ config = """---
 #   offset: -0.1                  # shift up/down
 #
 # glyphs:
-#   - glyph1_file:                # file name, without extention
-#       from: 0xNNN               # Symbol code 0x - hex, original
-#       code: 0xNNN               # Symbol code 0x - hex, remapped
-#       css: icon-gpyph1-name     # For generated CSS
-#       search: [word1, word2]    # Search aliases (array). CSS name will be
+#   - file: glyph1_file           # file name, without extention
+#     from: 0xNNN                 # Symbol code 0x - hex, original
+#     code: 0xNNN                 # Symbol code 0x - hex, remapped
+#     css: icon-gpyph1-name       # For generated CSS
+#     search: [word1, word2]      # Search aliases (array). CSS name will be
 #                                 # included automatically
 #
-#       transform:                # personal glyph transformation.
-#         rescale_rel: 0.9        # *_rel - applyed after global.
-#         offset: 0.2             # without *_rel - override global
+#     transform:                  # personal glyph transformation.
+#       rescale_rel: 0.9          # *_rel - applyed after global.
+#       offset: 0.2               # without *_rel - override global
 #
 ################################################################################
 #
@@ -92,8 +93,9 @@ font_attrs = [
 # add beginning part
 config += """
 
-css-prefix: "icon-"
-demo-columns: 4
+demo:
+  css_prefix: "icon-"
+  columns: 4
 
 transform:
   rescale: 1.0
@@ -129,8 +131,8 @@ for i, glyph in enumerate(font.glyphs()):
     code = '0x%04x' % glyph.unicode
 
     config += """
-  - glyph{i}:
-      code: {code}
+  - file: glyph{i}
+    code: {code}
 """.format(i=i, code=code)
 
 

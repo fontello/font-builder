@@ -26,7 +26,6 @@ def get_transform_config(config):
     font_transform = config.get('transform', {})
 
     def get_transform_item(glyph):
-        name, glyph = glyph.items()[0]
         transform = font_transform.copy()
         transform.update(glyph.get('transform', {}))
         return (glyph.get('code'), transform)

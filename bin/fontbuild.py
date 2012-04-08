@@ -23,13 +23,10 @@ for key, value in config['font'].items():
     setattr(font, key, value)
 
 # process glyphs
-for item in config['glyphs']:
-    name = item.keys()[0]
-    glyph = item[name]
-
+for glyph in config['glyphs']:
     c = font.createChar(int(glyph['code']))
 
-    c.importOutlines(args.svg_dir + '/' + name + '.svg')
+    c.importOutlines(args.svg_dir + '/' + glyph['file'] + '.svg')
     c.left_side_bearing = KERNING
     c.right_side_bearing = KERNING
 

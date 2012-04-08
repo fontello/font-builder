@@ -16,13 +16,11 @@ data = yaml.load(open(args.config, 'r'))
 
 glyphs = []
 
-for item in data['glyphs']:
-    name = item.keys()[0]
-    glyph_info = item[name]
+for glyph_info in data['glyphs']:
 
     # use giph name if css field is absent
     if (not 'css' in glyph_info):
-        glyph_info['css'] = name
+        glyph_info['css'] = glyph_info['file']
 
     # code to unicode char
     glyph_info['char'] = unichr(glyph_info['code']);
