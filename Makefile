@@ -13,8 +13,8 @@ $(TTF2EOT_BIN):
 
 
 $(TTFAUTOHINT_BIN):
-	git submodule init support/ttfautohint && \
-		git submodule update support/ttfautohint
+	git submodule init support/ttfautohint
+	git submodule update support/ttfautohint
 	cd ./support/ttfautohint && \
 		git submodule init && \
 		git submodule update && \
