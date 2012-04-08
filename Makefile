@@ -1,10 +1,18 @@
-TTF2EOT_BIN     = ./support/ttf2eot/ttf2eot
-TTFAUTOHINT_BIN = ./support/ttfautohint/frontend/ttfautohint
+PREFIX          ?= /usr/local
+
+
+TTF2EOT_BIN     := ./support/ttf2eot/ttf2eot
+TTFAUTOHINT_BIN := ./support/ttfautohint/frontend/ttfautohint
 
 
 support:
 	$(MAKE) $(TTF2EOT_BIN)
 	$(MAKE) $(TTFAUTOHINT_BIN)
+
+
+support-install: support
+	cp $(TTFAUTOHINT_BIN) $(PREFIX)/bin
+	cp $(TTF2EOT_BIN) $(PREFIX)/bin
 
 
 $(TTF2EOT_BIN):
