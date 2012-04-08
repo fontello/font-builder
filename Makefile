@@ -3,8 +3,6 @@ TTFAUTOHINT_BIN = ./support/ttfautohint/frontend/ttfautohint
 
 
 support:
-	git submodule init
-	git submodule update
 	$(MAKE) $(TTF2EOT_BIN)
 	$(MAKE) $(TTFAUTOHINT_BIN)
 
@@ -15,6 +13,8 @@ $(TTF2EOT_BIN):
 
 
 $(TTFAUTOHINT_BIN):
+	git submodule init support/ttfautohint && \
+		git submodule update support/ttfautohint
 	cd ./support/ttfautohint && \
 		git submodule init && \
 		git submodule update && \
