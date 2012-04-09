@@ -16,22 +16,24 @@ data = yaml.load(open(args.config, 'r'))
 
 glyphs = []
 
-for glyph_info in data['glyphs']:
+for glyph in data['glyphs']:
 
     # use giph name if css field is absent
-    if (not 'css' in glyph_info):
-        glyph_info['css'] = glyph_info['file']
+    if (not 'css' in glyph):
+        glyph['css'] = glyph['file']
 
     # code to unicode char
-    glyph_info['char'] = unichr(glyph_info['code']);
+    glyph['chr'] = unichr(glyph['code']);
 
     # code to sting in hex format
-    glyph_info['code'] = hex(glyph_info['code'])[2:]
+    glyph['hex'] = "\\" + hex(glyph['code'])[2:]
 
-    glyphs.append(glyph_info)
+    glyphs.append(glyph)
 
 data['glyphs'] = glyphs
-data['css-prefix'] = data['demo']['css_prefix']
+
+data['font.fontname'] = data['font']['fontname']
+data['demo.css_prefix'] = data['demo']['css_prefix']
 
 chunk_size = int(math.ceil(len(glyphs) / float(data['demo']['columns'])))
 data['columns'] = [{'glyphs': glyphs[i:i + chunk_size]} for i in range(0, len(glyphs), chunk_size)]
