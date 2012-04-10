@@ -50,7 +50,7 @@ config = """---
 #
 #
 #
-# # Optional. You can apply global resize + offset to all font glyphs.
+# # Optional. You can apply global rescale + offset to all font glyphs.
 # # Param values ar 0..1, where 1 = 100%. 
 # #
 # transform:

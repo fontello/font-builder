@@ -27,13 +27,13 @@
 #
 #
 # #
-# # Optional. You can apply global resize + offset to all font glyphs.
+# # Optional. You can apply global rescale + offset to all font glyphs.
 # # Param values ar 0..1, where 1 = 100%. 
 # #
 # transform:
 #   baseline: 0.2                 # baseline for rescale symmetry. Default value
 #                                 # calculated from ascent/decsent
-#   resize: 0.68                  # rescale glyphs and center around baseline
+#   rescale: 0.68                 # rescale glyphs and center around baseline
 #   offset: -0.1                  # shift up/down
 #
 # glyphs:
@@ -47,7 +47,7 @@
 #       # local transformations, only for this glyph (optional)
 #       #
 #       transform:                # personal glyph transformation.
-#         resize_rel              # *_rel - applyed after global.
+#         rescale_rel             # *_rel - applyed after global.
 #         offset: 0.2             # without *_rel - override global
 #
 ################################################################################
