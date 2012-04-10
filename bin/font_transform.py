@@ -82,14 +82,13 @@ if __name__ == '__main__':
     except:
         sys.exit(1)
 
-    # set ascent/descent
-    ascent = config.get('font', {}).get('ascent', None)
-    descent = config.get('font', {}).get('descent', None)
+    # set ascent/descent/em
+    ascent  = config.get('font', {}).get('ascent', font.ascent)
+    descent = config.get('font', {}).get('descent', font.descent)
 
-    if ascent:
-        font.ascent = ascent
-    if descent:
-        font.descent = descent
+    font.em      = ascent + descent
+    font.ascent  = ascent
+    font.descent = descent
 
     # set font encoding so we can select any unicode code point
     font.encoding = 'UnicodeFull'
