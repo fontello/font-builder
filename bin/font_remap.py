@@ -77,9 +77,12 @@ if __name__ == '__main__':
     except:
         sys.exit(1)
 
-    # tmp font for cut()/paste()
-    tmp_font = fontforge.font()
-    tmp_font.encoding = 'UnicodeFull'
+    new_font = fontforge.font()
+    new_font.encoding = 'UnicodeFull'
+
+    # load font properties from config
+    for key, value in config.get('font', {}).items():
+        setattr(new_font, key, value)
 
     # set font encoding so we can select any unicode code point
     font.encoding = 'UnicodeFull'
@@ -92,25 +95,13 @@ if __name__ == '__main__':
                 from_code)
             continue
 
-        if from_code == to_code:
-            continue
-
         font.selection.select(("unicode",), from_code)
-        font.cut()
-        tmp_font.selection.select(("unicode",), to_code)
-        tmp_font.paste()
-
-    for from_code, to_code in remap_config:
-        if from_code == to_code:
-            continue
-
-        tmp_font.selection.select(("unicode",), to_code)
-        tmp_font.cut()
-        font.selection.select(("unicode",), to_code)
-        font.paste()
+        font.copy()
+        new_font.selection.select(("unicode",), to_code)
+        new_font.paste()
 
     try:
-        font.generate(args.dst_font)
+        new_font.generate(args.dst_font)
     except:
         error("Cannot write to file %s\n" % args.dst_font)
         sys.exit(1)
