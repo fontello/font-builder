@@ -95,10 +95,10 @@ if __name__ == '__main__':
 
     def apply_rescale(glyph, baseline, scale):
         # bbox: a tuple representing a rectangle (xmin,ymin, xmax,ymax)
-        bbox = glyph.boundingBox()
+        #bbox = glyph.boundingBox()
 
         # center of bbox
-        x, y = (bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2
+        #x, y = (bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2
 
         # scale origin point
         sx, sy = 0, (font.ascent + font.descent) * baseline - font.descent
@@ -110,10 +110,6 @@ if __name__ == '__main__':
         # scale around (0, 0)
         scale_matrix = psMat.scale(scale)
         glyph.transform(scale_matrix)
-
-        # scale width and vwidth as well
-        glyph.width *= scale
-        glyph.vwidth *= scale
 
         # move scale origin point back to its old position
         translate_matrix = psMat.translate(sx, sy)
@@ -134,8 +130,6 @@ if __name__ == '__main__':
         except TypeError:
             error("Warning: no such glyph (code=0x%04x)\n" % code)
             continue
-
-        #font.selection.select(("unicode",), code)
 
         if 'rescale' in transform:
             baseline = transform.get('baseline', default_baseline)
