@@ -1,109 +1,80 @@
 #!/usr/bin/env python
 
 import sys
+from sys import stderr
 import argparse
 import yaml
 import fontforge
 
+parser = argparse.ArgumentParser(description='Font remap tool')
+parser.add_argument('-c', '--config',   type=str, required=True,
+    help='Config example: ../config.yml')
+parser.add_argument('-i', '--src_font', type=str, required=True,
+    help='Input font')
+parser.add_argument('-o', '--dst_font', type=str, required=True,
+    help='Output font')
 
-error = sys.stderr.write
+args = parser.parse_args()
 
+try:
+    config = yaml.load(open(args.config, 'r'))
+except IOError as (errno, strerror):
+    stderr.write("Cannot open %s: %s\n" % (args.config, strerror))
+    sys.exit(1)
+except yaml.YAMLError, e:
+    if hasattr(e, 'problem_mark'):
+        mark = e.problem_mark
+        stderr.write("YAML parser error in file %s at line %d, col %d\n" %
+            (args.config, mark.line + 1, mark.column + 1))
+    else:
+        stderr.write("YAML parser error in file %s: %s\n" % (args.config, e))
+    sys.exit(1)
 
-# returns dict representing duplicate values of seq
-# in seq = [1,1,2,3,3,3,3,4,5], out dict {1: 2, 3: 4}
-def get_dups(seq):
-    count = {}
-    for s in seq:
-        count[s] = count.get(s, 0) + 1
-    dups = dict((k, v) for k, v in count.iteritems() if v > 1)
-    return dups
-
-
-# returns list of tuples:
+# prepare config to view:
 # [(from_code1, to_code1), (from_code2, to_code2), ...]
-def get_remap_config(config):
-    def get_remap_item(glyph):
-        return (glyph.get('from', glyph['code']), glyph['code'])
-    return [get_remap_item(glyph) for glyph in config['glyphs']]
+remap_config = [(glyph.get('from', glyph['code']), glyph['code'])
+                    for glyph in config['glyphs']]
 
+# validate config: fetcy duplicate 'from' codes
+src_codes = zip(*remap_config)[0]
+if len(src_codes) != len(set(src_codes)):
+    stderr.write("Error in file %s: glyph codes aren't unique:\n" % args.config)
+    for code in set(src_codes):
+        if src_codes.count(code) > 1:
+            stderr.write("Duplicate 'from:' 0x%04x\n" % code)
+    sys.exit(1)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Font remap tool')
-    parser.add_argument('-c', '--config',   type=str, required=True,
-        help='Config example: ../config.yml')
-    parser.add_argument('-i', '--src_font', type=str, required=True,
-        help='Input font')
-    parser.add_argument('-o', '--dst_font', type=str, required=True,
-        help='Output font')
-
-    args = parser.parse_args()
-
-    try:
-        config = yaml.load(open(args.config, 'r'))
-    except IOError as (errno, strerror):
-        error("Cannot open %s: %s\n" % (args.config, strerror))
-        sys.exit(1)
-    except yaml.YAMLError, e:
-        if hasattr(e, 'problem_mark'):
-            mark = e.problem_mark
-            error("YAML parser error in file %s at line %d, col %d\n" %
-                (args.config, mark.line + 1, mark.column + 1))
-        else:
-            error("YAML parser error in file %s: %s\n" % (args.config, e))
-        sys.exit(1)
-
-    remap_config = get_remap_config(config)
-
-    from_codes, to_codes = zip(*remap_config)
-
-    # validate config: 'from:' codes
-    dups = get_dups(from_codes)
-    if len(dups) > 0:
-        error("Error in file %s: glyph codes aren't unique:\n" % args.config)
-        for k in sorted(dups.keys()):
-            error("Duplicate 'from:' 0x%04x\n" % k)
-        sys.exit(1)
-
-    # validate config: 'code:' codes
-    dups = get_dups(to_codes)
-    if len(dups) > 0:
-        error("Error in file %s: glyph codes aren't unique:\n" % args.config)
-        for k in sorted(dups.keys()):
-            error("Duplicate 'code:' 0x%04x\n" % k)
-        sys.exit(1)
-
-    try:
-        font = fontforge.open(args.src_font)
-    except:
-        sys.exit(1)
-
-    new_font = fontforge.font()
-    new_font.encoding = 'UnicodeFull'
-
-    # load font properties from config
-    for key, value in config.get('font', {}).items():
-        setattr(new_font, key, value)
-
+try:
+    font = fontforge.open(args.src_font)
     # set font encoding so we can select any unicode code point
     font.encoding = 'UnicodeFull'
+except:
+    stderr.write("Error: Fontforge can't open source %s" % args.src_font)
+    sys.exit(1)
 
-    for from_code, to_code in remap_config:
-        try:
-            font[from_code]
-        except TypeError:
-            error("Warning: no such glyph in the source font (code=0x%04x)\n" %
-                from_code)
-            continue
+new_font = fontforge.font()
+new_font.encoding = 'UnicodeFull'
 
-        font.selection.select(("unicode",), from_code)
-        font.copy()
-        new_font.selection.select(("unicode",), to_code)
-        new_font.paste()
+# load font properties from config
+for key, value in config.get('font', {}).items():
+    setattr(new_font, key, value)
 
+
+for from_code, to_code in remap_config:
     try:
-        new_font.generate(args.dst_font)
-    except:
-        error("Cannot write to file %s\n" % args.dst_font)
-        sys.exit(1)
+        font[from_code]
+    except TypeError:
+        stderr.write("Warning: no such glyph in the source font (code=0x%04x)\n" %
+            from_code)
+        continue
 
-    sys.exit(0)
+    font.selection.select(("unicode",), from_code)
+    font.copy()
+    new_font.selection.select(("unicode",), to_code)
+    new_font.paste()
+
+try:
+    new_font.generate(args.dst_font)
+except:
+    stderr.write("Cannot write to file %s\n" % args.dst_font)
+    sys.exit(1)

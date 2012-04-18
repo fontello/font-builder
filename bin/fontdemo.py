@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+from sys import stderr
 import argparse
 import yaml
 import pystache
@@ -12,7 +14,19 @@ parser.add_argument('output', type=str, help='Output file')
 
 args = parser.parse_args()
 
-data = yaml.load(open(args.config, 'r'))
+try:
+    data = yaml.load(open(args.config, 'r'))
+except IOError as (errno, strerror):
+    stderr.write("Cannot open %s: %s\n" % (args.config, strerror))
+    sys.exit(1)
+except yaml.YAMLError, e:
+    if hasattr(e, 'problem_mark'):
+        mark = e.problem_mark
+        stderr.write("YAML parser error in file %s at line %d, col %d\n" %
+            (args.config, mark.line + 1, mark.column + 1))
+    else:
+        stderr.write("YAML parser error in file %s: %s\n" % (args.config, e))
+    sys.exit(1)
 
 glyphs = []
 
@@ -38,9 +52,18 @@ data['demo.css_prefix'] = data['demo']['css_prefix']
 chunk_size = int(math.ceil(len(glyphs) / float(data['demo']['columns'])))
 data['columns'] = [{'glyphs': glyphs[i:i + chunk_size]} for i in range(0, len(glyphs), chunk_size)]
 
-template = open(args.template, 'r').read()
+try:
+    template = open(args.template, 'r').read()
+except IOError as (errno, strerror):
+    stderr.write("Cannot open %s: %s\n" % (args.template, strerror))
+    sys.exit(1)
+
+
 
 output = pystache.render(template, data).encode('utf-8');
 
-f = open(args.output, 'w')
-f.write(output)
+try:
+    f = open(args.output, 'w').write(output)
+except IOError as (errno, strerror):
+    stderr.write("Cannot write %s: %s\n" % (args.output, strerror))
+    sys.exit(1)

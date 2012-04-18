@@ -18,7 +18,11 @@ def get_attrs(font, attrs):
 
 args = parser.parse_args()
 
-font = fontforge.open(args.src_font)
+try:
+    font = fontforge.open(args.src_font)
+except:
+    stderr.write("Error: fontforge can't open source font from %s" % args.src_font)
+    sys.exit(1)
 
 # add comment
 config = """---
@@ -135,5 +139,9 @@ for i, glyph in enumerate(font.glyphs()):
     code: {code}
 """.format(i=i, code=code)
 
+try:
+    open(args.config, "w").write(config)
+except IOError as (errno, strerror):
+    stderr.write("Cannot write %s: %s\n" % (args.config, strerror))
+    sys.exit(1)
 
-open(args.config, "w").write(config)

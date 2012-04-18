@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import sys
+from sys import stderr
 import argparse
 import yaml
 import fontforge
@@ -14,7 +16,19 @@ parser.add_argument('-o', '--ttf_file', type=str, help='Output ttf file', requir
 
 args = parser.parse_args()
 
-config = yaml.load(open(args.config, 'r'))
+try:
+    config = yaml.load(open(args.config, 'r'))
+except IOError as (errno, strerror):
+    stderr.write("Cannot open %s: %s\n" % (args.config, strerror))
+    sys.exit(1)
+except yaml.YAMLError, e:
+    if hasattr(e, 'problem_mark'):
+        mark = e.problem_mark
+        stderr.write("YAML parser error in file %s at line %d, col %d\n" %
+            (args.config, mark.line + 1, mark.column + 1))
+    else:
+        stderr.write("YAML parser error in file %s: %s\n" % (args.config, e))
+    sys.exit(1)
 
 font = fontforge.font()
 
@@ -35,4 +49,8 @@ for glyph in config['glyphs']:
     c.round()
 #    c.addExtrema()
 
-font.generate(args.ttf_file)
+try:
+    font.generate(args.ttf_file)
+except:
+    stderr.write("Cannot write to file %s\n" % args.ttf_file)
+    sys.exit(1)
