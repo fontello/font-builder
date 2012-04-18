@@ -3,8 +3,19 @@
 # Format is descriped below.
 #
 #
-# css-prefix: "icon-"             # prefix for css-generated classes
-# demo-columns: 4                 # used for html demo page generation
+# # metadata, to generate demo & fontello info dialogs
+# meta:
+#
+#  author: Daniel Buce
+#  homepage: http://...
+#  email: ...
+#  twitter: http://twitter.com/...
+#  dribble: http://dribbble.com/...
+#  licence: SIL
+#  licence_url: http://scripts.sil.org/OFL
+#
+#   css-prefix: "icon-"             # prefix for css-generated classes
+#   demo-columns: 4                 # used for html demo page generation
 #
 # # Font headers. All vars from here will be used as font
 # # params in fontforge http://fontforge.sourceforge.net/python.html
@@ -38,7 +49,7 @@
 #
 # glyphs:
 #   - glyph1_file:                # file name, without extention
-#       from: 0xNNN               # Symbol code 0x - hex, original
+#       from: 0xNNN               # Source code for remapper
 #       code: 0xNNN               # Symbol code 0x - hex
 #       css: icon-gpyph1-name     # For generated CSS
 #       search: [word1, word2]    # Search aliases (array). CSS name will be

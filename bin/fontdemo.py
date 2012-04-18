@@ -47,9 +47,9 @@ for glyph in data['glyphs']:
 data['glyphs'] = glyphs
 
 data['font.fontname'] = data['font']['fontname']
-data['demo.css_prefix'] = data['demo']['css_prefix']
+data['meta.css_prefix'] = data['meta']['css_prefix']
 
-chunk_size = int(math.ceil(len(glyphs) / float(data['demo']['columns'])))
+chunk_size = int(math.ceil(len(glyphs) / float(data['meta']['columns'])))
 data['columns'] = [{'glyphs': glyphs[i:i + chunk_size]} for i in range(0, len(glyphs), chunk_size)]
 
 try:
