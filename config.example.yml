@@ -38,6 +38,7 @@
 #
 # glyphs:
 #   - glyph1_file:                # file name, without extention
+#       from: 0xNNN               # Symbol code 0x - hex, original
 #       code: 0xNNN               # Symbol code 0x - hex
 #       css: icon-gpyph1-name     # For generated CSS
 #       search: [word1, word2]    # Search aliases (array). CSS name will be
