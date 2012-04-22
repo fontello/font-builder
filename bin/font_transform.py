@@ -6,7 +6,6 @@ import argparse
 import yaml
 import fontforge
 import psMat
-from pprint import pprint
 
 
 def apply_rescale(glyph, origin, scale):
