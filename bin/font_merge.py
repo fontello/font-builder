@@ -2,12 +2,15 @@
 import sys
 from sys import stderr
 import argparse
-import json
+import yaml
 import fontforge
 
-parser = argparse.ArgumentParser(description='Font merge tool')
+parser = argparse.ArgumentParser(description='Merges glyphs from '
+        'several fonts, as specified in config.')
 parser.add_argument('-c', '--config',   type=str, required=False,
-        help='Config example: ../config.yml. If missed, then loaded from stdin')
+        help='Config file in json or yml format. If missed, then '
+        'loaded from stdin. '
+        'example: ../config.json')
 parser.add_argument('-o', '--dst_font', type=str, required=True,
         help='Output font')
 
@@ -24,11 +27,19 @@ else:
     unparsed_config = sys.stdin
 
 try:
-    config = json.load(unparsed_config)
-except ValueError, e:
-    stderr.write("JSON parser error in file %s: %s\n" % (args.config, e))
-    sys.exit(1)
+    # yaml parser undestend both formats
+    config = yaml.load(unparsed_config)
 
+except yaml.YAMLError, e:
+
+    config_file_name = '' if args.config is None else args.config
+    if hasattr(e, 'problem_mark'):
+        mark = e.problem_mark
+        stderr.write("YAML parser error in config %s at line %d, col %d\n" %
+            (config_file_name, mark.line + 1, mark.column + 1))
+    else:
+        stderr.write("YAML parser error in config %s: %s\n" % (config_file_name, e))
+    sys.exit(1)
 
 # init new font
 new_font = fontforge.font()
@@ -49,8 +60,8 @@ except:
 
 # prepare config to view:
 # [(from_code1, to_code1, src), (from_code2, to_code2, src), ...]
-remap_config = [(int(glyph.get('from', glyph['code']), 0),
-                int(glyph['code'], 0), glyph['src'])
+remap_config = [(glyph.get('from', glyph['code']),
+                glyph['code'], glyph['src'])
                     for glyph in config['glyphs']]
 
 
