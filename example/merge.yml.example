@@ -1,0 +1,38 @@
+font:
+
+  version: "1.0"
+
+  # use !!!small!!! letters a-z, or Opera will fail under OS X
+  # fontname will be also used as file name.
+  fontname: myfont
+
+  fullname: MyFont
+  familyname: Myfont
+
+  copyright: Copyright (C) 2012 by xxxxxxxx
+
+  ascent: 1638
+  descent: 410
+  weight: Regular
+
+glyphs:
+  - css: add-contact-add-user
+    from: 0xe001
+    code: 0xe002
+    src:  entypo
+
+  - css: hash
+    from: 0x0024 
+    code: 0x0023
+    src:  iconic
+
+  - css: glyph2
+    from: 0xf001
+    code: 0xf002
+    src:  awesome
+
+src_fonts: 
+  iconic: "/absolute/path/to/iconic.ttf"
+  entypo: "/absolute/path/to/entypo.ttf"
+  awesome: "/absolute/path/to/fontawesome.ttf" 
+
