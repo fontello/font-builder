@@ -26,6 +26,19 @@ except:
 try:
     font.generate(font_name_template + '.woff')
     font.generate(font_name_template + '.svg')
+
+    # Fix SVG header, to make webkit work
+    source_text = '''<svg>'''
+    replace_text = '''<svg xmlns="http://www.w3.org/2000/svg">'''
+    file_name = font_name_template + '.svg'
+
+    file = open(file_name, "r")
+    text = file.read()
+    file.close()
+    file = open(file_name, "w")
+    file.write(text.replace(source_text, replace_text))
+    file.close()
+
 except:
     stderr.write("Cannot write files in to %s\n" % args.fonts_dir)
     sys.exit(1)
