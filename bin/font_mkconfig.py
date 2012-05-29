@@ -3,6 +3,8 @@
 import argparse
 import yaml
 import fontforge
+import string
+import random
 
 parser = argparse.ArgumentParser(description='Font config generation tool')
 parser.add_argument('-i', '--src_font', type=str, required=True,
@@ -39,11 +41,18 @@ font_attrs = [
 # add beginning part
 config = """
 
-demo:
+meta:
+  author:
+  homepage:
+  email:
+  licence:
+  licence_url:
+
   css_prefix: "icon-"
   columns: 4
 
 transform:
+  baseline: 0.5
   rescale: 1.0
   offset: 0.0
 
@@ -52,16 +61,16 @@ font:
 
   # use !!!small!!! letters a-z, or Opera will fail under OS X
   # fontname will be also used as file name.
-  fontname: "{fontname}"
+  fontname: {fontname}
 
-  fullname: "{fullname}"
-  familyname: "{familyname}"
+  fullname: {fullname}
+  familyname: {familyname}
 
-  copyright: "{copyright}"
+  copyright: {copyright}
 
   ascent: {ascent}
   descent: {descent}
-  weight: "{weight}"
+  weight: {weight}
 
 
 """.format(**get_attrs(font, font_attrs))
@@ -70,16 +79,24 @@ font:
 config += """glyphs:
 """
 
+glyph_template = """
+  - css: glyph{i}
+    code: {code}
+    uuid: {uuid}
+    from: {code}
+    search:
+"""
+
 for i, glyph in enumerate(font.glyphs()):
     if glyph.unicode == -1:
         continue
 
     code = '0x%04x' % glyph.unicode
 
-    config += """
-  - file: glyph{i}
-    code: {code}
-""".format(i=i, code=code)
+    uuid = ''.join(random.choice(string.ascii_lowercase+string.digits)
+            for x in range(32))
+
+    config += glyph_template.format(i=i, code=code, uuid=uuid)
 
 try:
     open(args.config, "w").write(config)
