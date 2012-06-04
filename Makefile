@@ -44,5 +44,4 @@ dev-deps:
 	pip -q install pystache argparse
 
 
-.SILENT: dev-deps
 .PHONY: support
