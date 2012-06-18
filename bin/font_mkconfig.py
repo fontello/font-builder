@@ -82,7 +82,7 @@ config += """glyphs:
 glyph_template = """
   - css: glyph{i}
     code: {code}
-    uuid: {uuid}
+    uid: {uid}
     from: {code}
     search:
 """
@@ -93,10 +93,10 @@ for i, glyph in enumerate(font.glyphs()):
 
     code = '0x%04x' % glyph.unicode
 
-    uuid = ''.join(random.choice(string.ascii_lowercase+string.digits)
+    uid = ''.join(random.choice(string.ascii_lowercase+string.digits)
             for x in range(32))
 
-    config += glyph_template.format(i=i, code=code, uuid=uuid)
+    config += glyph_template.format(i=i, code=code, uid=uid)
 
 try:
     open(args.config, "w").write(config)
