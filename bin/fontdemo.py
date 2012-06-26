@@ -37,7 +37,11 @@ for glyph in data['glyphs']:
         glyph['css'] = glyph['file']
 
     # code to unicode char
-    glyph['chr'] = unichr(glyph['code']);
+    if (0xffff >= glyph['code']):
+      glyph['chr'] = "\\" + hex(glyph['code'])[2:]
+    else:
+      data['utf8'] = True
+      glyph['chr'] = unichr(glyph['code'])
 
     # code to sting in hex format
     glyph['hex'] = "\\" + hex(glyph['code'])[2:]
