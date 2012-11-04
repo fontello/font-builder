@@ -9,26 +9,6 @@ var Xml2js = require('xml2js');
 var async = require('async');
 
 var ArgumentParser = require('argparse').ArgumentParser;
-var parser = new ArgumentParser({
-  version: '0.0.1',
-  addHelp: true,
-  description: 'Dump glyphs from font'
-});
-parser.addArgument(
-  [ '-i', '--src_font' ],
-  {
-    help: 'Source font path',
-    required: true
-  }
-);
-parser.addArgument(
-  [ '-o', '--glyphs_dir' ],
-  {
-    help: 'Glyphs output folder',
-    required: true
-  }
-);
-var args = parser.parseArgs();
 
 
 var glyph_template = '<svg width="1000" height="1000"' +
@@ -52,6 +32,28 @@ function prepare_glyphs(glyphs) {
   });
   return result;
 }
+
+var parser = new ArgumentParser({
+  version: '0.0.1',
+  addHelp: true,
+  description: 'Dump glyphs from font'
+});
+parser.addArgument(
+  [ '-i', '--src_font' ],
+  {
+    help: 'Source font path',
+    required: true
+  }
+);
+parser.addArgument(
+  [ '-o', '--glyphs_dir' ],
+  {
+    help: 'Glyphs output folder',
+    required: true
+  }
+);
+
+var args = parser.parseArgs();
 
 
 var parser = new Xml2js.Parser();
