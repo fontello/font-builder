@@ -7,6 +7,7 @@ var path = require('path');
 
 var Xml2js = require('xml2js');
 var async = require('async');
+var _ = require('underscore');
 
 var ArgumentParser = require('argparse').ArgumentParser;
 
@@ -25,8 +26,16 @@ var glyph_template = '<svg width="1000" height="1000"' +
 function prepare_glyphs(glyphs) {
   var result = [];
   glyphs.forEach(function (glyph) {
+    var glyph_name = glyph['$']['glyph-name'] ? glyph['$']['glyph-name'] : glyph['$']['unicode'];
+    if (_.isString(glyph_name)) {
+      glyph_name = glyph_name.replace(/^\s+|\s+$/g, "");
+    }
+    if (_.isEmpty(glyph_name)) {
+      return;
+    }
+
     result.push({
-      name: glyph['$']['glyph-name'],
+      name: glyph_name,
       d: glyph['$']['d']
     });
   });
@@ -54,14 +63,19 @@ parser.addArgument(
 );
 
 var args = parser.parseArgs();
-
+if (!fs.existsSync(args.src_font)) {
+  console.log('File ' + args.src_font + ' not found');
+  process.exit(1);
+}
 
 var parser = new Xml2js.Parser();
 fs.readFile(args.src_font, function (err, data) {
+  data = data.toString().replace(/unicode="&#x([a-f0-9]+);"/g, 'unicode="0x$1"');
+
   parser.parseString(data, function (err, result) {
     var font_horiz_adv_x = result.svg.defs[0].font[0]['$']['horiz-adv-x'];
 
-    var glyphs = prepare_glyphs(result.svg.defs[0].font[0].glyph, font_horiz_adv_x);
+    var glyphs = prepare_glyphs(result.svg.defs[0].font[0].glyph);
     async.forEachSeries(glyphs, function (glyph, next_glyph) {
       var file_path = path.join(args.glyphs_dir, glyph.name + '.svg');
       // FIXME need some magic
