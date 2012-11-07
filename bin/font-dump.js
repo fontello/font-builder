@@ -52,11 +52,20 @@ var childArgs = [
 ];
 
 childProcess.execFile(binPath, childArgs, function (err, stdout, stderr) {
-  fs.unlinkSync(tmp_config_file);
-  fs.rmdirSync(tmp_dir);
   if (err) {
     console.log(err);
-    process.exit(1);
+    FsTools.remove(tmp_dir, function (err) {
+      if (err) {
+        console.log(err);
+      }
+      process.exit(1);
+    });
   }
-  console.log('Done');
+  FsTools.remove(tmp_dir, function (err) {
+    if (err) {
+      console.log(err);
+      process.exit(1);
+    }
+    console.log('Done');
+  });
 });
