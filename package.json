@@ -1,0 +1,16 @@
+{
+  "name"            : "font-builder",
+  "description"     : "Fontello tool",
+  "version"         : "0.0.1",
+  "repository"      : {
+                        "type": "git",
+                        "url" : "git@github.com:fontello/font-builder.git"
+                      },
+  "bin"             : { "js-yaml": "bin/js-yaml.js" },
+  "dependencies"    : {
+                        "argparse"          : "~ 0.1.7",
+                        "fs-tools"          : "~ 0.2.6",
+                        "phantomjs"         : "~ 0.2.2"
+                      },
+  "engines"         : { "node": ">= 0.8.0" }
+}
