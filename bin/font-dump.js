@@ -81,7 +81,7 @@ var glyphs = page.evaluate(function (font, glyph_size) {
   var ascent = parseInt($(font).find('font-face').attr('ascent'), 10);
   // descent has negative value
   var descent = -parseInt($(font).find('font-face').attr('descent'), 10);
-  var font_horiz_adv_x = -$(font).find('font').attr('descent');
+  var font_horiz_adv_x = $(font).find('font').attr('horiz-adv-x');
 
   var result = [];
   $(font).find('glyph').each(function () {
