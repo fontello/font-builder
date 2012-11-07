@@ -40,7 +40,7 @@ var config = {
   glyphs_dir: args.glyphs_dir
 };
 
-var tmp_dir = FsTools.tmpdir('/tmp/fooXXX');
+var tmp_dir = FsTools.tmpdir('/tmp/font-dumpXXX');
 var tmp_config_file = path.join(tmp_dir, 'config.json');
 
 fs.mkdirSync(tmp_dir);
