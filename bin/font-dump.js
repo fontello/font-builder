@@ -19,6 +19,20 @@ var parser = new ArgumentParser({
   description: 'Dump glyphs from font'
 });
 parser.addArgument(
+  ['--hcrop'],
+  {
+    help: 'Crop free space from left and right',
+    action: 'storeTrue'
+  }
+);
+parser.addArgument(
+  ['--vcenter'],
+  {
+    help: 'Realign glyphs vertically',
+    action: 'storeTrue'
+  }
+);
+parser.addArgument(
   [ '-i', '--src_font' ],
   {
     help: 'Source font path',
@@ -33,12 +47,18 @@ parser.addArgument(
   }
 );
 
+
 var args = parser.parseArgs();
 
 var config = {
   src_font: args.src_font,
-  glyphs_dir: args.glyphs_dir
+  glyphs_dir: args.glyphs_dir,
+  hcrop: args.hcrop,
+  vcenter: args.vcenter
 };
+
+//console.log(config.toObject());
+//process.exit();
 
 var tmp_dir = FsTools.tmpdir('/tmp/font-dumpXXX');
 var tmp_config_file = path.join(tmp_dir, 'config.json');
@@ -67,6 +87,6 @@ childProcess.execFile(binPath, childArgs, function (err, stdout, stderr) {
       console.log(err);
       process.exit(1);
     }
-    console.log('Done');
+    //console.log('Done');
   });
 });
