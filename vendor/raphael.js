@@ -1673,7 +1673,7 @@
                 max: {x: mmax[apply](0, x), y: mmax[apply](0, y)}
             };
         }),
-        path2curve = R._path2curve = cacher(function (path, path2) {
+        path2curve = R._path2curve = cacher(function (path, path2, pcom) {
             var pth = !path2 && paths(path);
             if (!path2 && pth.curve) {
                 return pathClone(pth.curve);
@@ -1696,6 +1696,7 @@
                         case "A":
                             path = ["C"][concat](a2c[apply](0, [d.x, d.y][concat](path.slice(1))));
                             break;
+/*
                         case "S":
                             nx = d.x + (d.x - (d.bx || d.x));
                             ny = d.y + (d.y - (d.by || d.y));
@@ -1706,6 +1707,39 @@
                             d.qy = d.y + (d.y - (d.qy || d.y));
                             path = ["C"][concat](q2c(d.x, d.y, d.qx, d.qy, path[1], path[2]));
                             break;
+*/
+
+
+                        // issue #629 hotfix
+                        //
+                        // https://github.com/DmitryBaranovskiy/raphael/issues/629
+                        // http://stackoverflow.com/questions/13043217/raphael-path2curve-does-not-honor-the-original-path-fixed/13079377#13079377
+
+
+                        case "S":
+                            if (pcom == "C" || pcom == "S") { // In S we have to take into account, if the previous command is C/S 
+                              nx = d.x * 2 - d.bx;
+                              ny = d.y * 2 - d.by; 
+                            }
+                           else { // or some else command
+                              nx = d.x;
+                              ny = d.y;
+                            }
+                            path = ["C", nx, ny][concat](path.slice(1));
+                            break;
+                        case "T":
+                            if (pcom == "Q" || pcom == "T") { // In T we have to take into account, if the previous command is Q/T
+                              d.qx = d.x * 2 - d.qx;
+                              d.qy = d.y * 2 - d.qy;
+                            }
+                            else {
+                              d.qx = d.x;
+                              d.qy = d.y;
+                            }
+                            path = ["C"][concat](q2c(d.x, d.y, d.qx, d.qy, path[1], path[2]));
+                            break;
+
+
                         case "Q":
                             d.qx = path[1];
                             d.qy = path[2];
@@ -1731,6 +1765,12 @@
                         pp[i].shift();
                         var pi = pp[i];
                         while (pi.length) {
+
+
+                            pcoms1[i]="A"; // if created multiple C:s, their original seg is saved
+                            p2 && (pcoms2[i]="A"); // the same as above
+
+
                             pp.splice(i++, 0, ["C"][concat](pi.splice(0, 6)));
                         }
                         pp.splice(i, 1);
@@ -1747,11 +1787,48 @@
                         ii = mmax(p.length, p2 && p2.length || 0);
                     }
                 };
+
+
+                pcoms1 = [], // path commands of original path p
+                pcoms2 = [], // path commands of original path p2
+                pfirst = "", // temporary holder for original path command
+                pcom = ""; // holder for previous path command of original path
+
+
             for (var i = 0, ii = mmax(p.length, p2 && p2.length || 0); i < ii; i++) {
-                p[i] = processPath(p[i], attrs);
-                fixArc(p, i);
-                p2 && (p2[i] = processPath(p2[i], attrs2));
-                p2 && fixArc(p2, i);
+
+
+                p[i] && (pfirst = p[i][0]); // save current path command
+
+                if (pfirst != "C") // C is not saved yet, because it may be result of conversion
+                {
+                    pcoms1[i] = pfirst; // Save current path command
+                    i && ( pcom = pcoms1[i-1]); // Get previous path command pcom
+                }
+                p[i] = processPath(p[i], attrs, pcom); // Previous path command is inputted to processPath
+
+                if (pcoms1[i] != "A" && pfirst == "C") pcoms1[i] = "C"; // A is the only command
+                // which may produce multiple C:s
+                // so we have to make sure that C is also C in original path
+                  
+                fixArc(p, i); // fixArc adds also the right amount of A:s to pcoms1
+                  
+                if (p2) { // the same procedures is done to p2
+
+                    p2[i] && (pfirst = p2[i][0]);
+                    if (pfirst != "C")
+                    {
+                        pcoms2[i] = pfirst;
+                        i && (pcom = pcoms2[i-1]);
+                    }              
+                    p2[i] = processPath(p2[i], attrs2, pcom);
+
+                    if (pcoms2[i]!="A" && pfirst=="C") pcoms2[i]="C";
+                  
+                    fixArc(p2, i);
+                }
+
+
                 fixM(p, p2, attrs, attrs2, i);
                 fixM(p2, p, attrs2, attrs, i);
                 var seg = p[i],
