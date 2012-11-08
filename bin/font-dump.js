@@ -61,6 +61,7 @@ childProcess.execFile(binPath, childArgs, function (err, stdout, stderr) {
       process.exit(1);
     });
   }
+  console.log(stdout);
   FsTools.remove(tmp_dir, function (err) {
     if (err) {
       console.log(err);
