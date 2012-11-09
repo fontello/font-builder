@@ -40,7 +40,10 @@ for key, value in config['font'].items():
 for glyph in config['glyphs']:
     c = font.createChar(int(glyph['code']))
 
-    c.importOutlines(args.svg_dir + '/' + glyph['file'] + '.svg')
+    # css used as file name, if nod redefined
+    f = glyph.get('file', glyph['css'])
+
+    c.importOutlines(args.svg_dir + '/' + f + '.svg')
     c.left_side_bearing = KERNING
     c.right_side_bearing = KERNING
 
