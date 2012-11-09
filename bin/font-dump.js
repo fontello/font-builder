@@ -160,10 +160,8 @@ childProcess.execFile(binPath, childArgs, function (err, stdout, stderr) {
 
     glyph_out = {
       css: glyph.name,
-      file: glyph.name,
       code: '0x' + glyph.unicode.toString(16),
       uid: crypto.randomBytes(16).toString('hex'),
-      from: '0x' + glyph.unicode.toString(16),
       search: []
     }
 
