@@ -41,7 +41,7 @@ for glyph in config['glyphs']:
     c = font.createChar(int(glyph['code']))
 
     # css used as file name, if nod redefined
-    f = glyph.get('file', glyph['css'])
+    f = glyph.get('file', glyph.get('css'))
 
     c.importOutlines(args.svg_dir + '/' + f + '.svg')
     c.left_side_bearing = KERNING
