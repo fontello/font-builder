@@ -172,6 +172,12 @@ childProcess.execFile(binPath, childArgs, function (err, stdout, stderr) {
 
   // Create config template for new glyphs, if option set
   if (args.diff_config) {
+
+    if (!diff.length) {
+      console.log("No new glyphs, skip writing diff");
+      return;
+    }
+
     fs.writeFileSync(args.diff_config, yaml.stringify({glyphs: diff}, 10, 2));
   }
 });
