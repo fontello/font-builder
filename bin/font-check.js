@@ -88,8 +88,13 @@ args.files.forEach(function (filename) {
   //
 
   found_glyphs = found_glyphs.concat(config.glyphs.map(function (glyph) {
-    glyph.filename = filename;
-    return glyph;
+    return {
+      uid:  glyph.uid,
+      css:  glyph.css,
+      code: glyph.code,
+      file: glyph.file,
+      config_file: filename
+    };
   }));
 
   //
@@ -102,10 +107,12 @@ args.files.forEach(function (filename) {
     has_errors = true;
 
     duplicates.forEach(function (g) {
-      console.log('  - ' + JSON.stringify({
-        code_int: g.code,
-        code_hex: '0x' + g.code.toString(16)
-      }));
+      console.log('  - code:   ' + '0x' + g.code.toString(16));
+      console.log('    css:    ' + g.css);
+
+      if (g.file) {
+        console.log('    file:   ' + g.file);
+      }
     });
   });
 
@@ -119,10 +126,12 @@ args.files.forEach(function (filename) {
     has_errors = true;
 
     duplicates.forEach(function (g) {
-      console.log('  - ' + JSON.stringify({
-        code_int: g.code,
-        code_hex: '0x' + g.code.toString(16)
-      }));
+      console.log('  - code:   ' + '0x' + g.code.toString(16));
+      console.log('    css:    ' + g.css);
+
+      if (g.file) {
+        console.log('    file:   ' + g.file);
+      }
     });
   });
 });
@@ -143,29 +152,14 @@ if (1 < args.files.length) {
     has_errors = true;
 
     duplicates.forEach(function (g) {
-      console.log('  - ' + JSON.stringify({
-        code_int: g.code,
-        code_hex: '0x' + g.code.toString(16),
-        filename: g.filename
-      }));
-    });
-  });
+      console.log('  - code:   ' + '0x' + g.code.toString(16));
+      console.log('    css:    ' + g.css);
 
-  //
-  // check for duplicate name's
-  //
+      if (g.file) {
+        console.log('    file:   ' + g.file);
+      }
 
-  findDuplicates(found_glyphs, 'css').forEach(function (duplicates) {
-    console.log('Duplicate css <' + duplicates[0].css + '>');
-
-    has_errors = true;
-
-    duplicates.forEach(function (g) {
-      console.log('  - ' + JSON.stringify({
-        code_int: g.code,
-        code_hex: '0x' + g.code.toString(16),
-        filename: g.filename
-      }));
+      console.log('    from:   ' + g.config_file);
     });
   });
 
