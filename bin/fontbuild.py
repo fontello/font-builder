@@ -44,8 +44,8 @@ for glyph in config['glyphs']:
     f = glyph.get('file', glyph.get('css'))
 
     c.importOutlines(args.svg_dir + '/' + f + '.svg')
-    c.left_side_bearing = KERNING
-    c.right_side_bearing = KERNING
+    #c.left_side_bearing = KERNING
+    #c.right_side_bearing = KERNING
 
     # small optimization, should not affect quality
     c.simplify()
