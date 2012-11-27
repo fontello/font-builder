@@ -59,6 +59,7 @@ function findDuplicates(arr, key) {
 ////////////////////////////////////////////////////////////////////////////////
 
 
+var has_errors    = false;
 var found_glyphs  = [];
 var args          = cli.parseArgs();
 
@@ -98,6 +99,8 @@ args.files.forEach(function (filename) {
   findDuplicates(config.glyphs, 'uid').forEach(function (duplicates) {
     console.log('Duplicate uid <' + duplicates[0].uid + '> (in: ' + filename + ')');
 
+    has_errors = true;
+
     duplicates.forEach(function (g) {
       console.log('  - ' + JSON.stringify({
         code_int: g.code,
@@ -112,6 +115,8 @@ args.files.forEach(function (filename) {
 
   findDuplicates(config.glyphs, 'css').forEach(function (duplicates) {
     console.log('Duplicate css <' + duplicates[0].css + '> (in: ' + filename + ')');
+
+    has_errors = true;
 
     duplicates.forEach(function (g) {
       console.log('  - ' + JSON.stringify({
@@ -135,6 +140,8 @@ if (1 < args.files.length) {
   findDuplicates(found_glyphs, 'uid').forEach(function (duplicates) {
     console.log('Duplicate uid <' + duplicates[0].uid + '>');
 
+    has_errors = true;
+
     duplicates.forEach(function (g) {
       console.log('  - ' + JSON.stringify({
         code_int: g.code,
@@ -151,6 +158,8 @@ if (1 < args.files.length) {
   findDuplicates(found_glyphs, 'css').forEach(function (duplicates) {
     console.log('Duplicate css <' + duplicates[0].css + '>');
 
+    has_errors = true;
+
     duplicates.forEach(function (g) {
       console.log('  - ' + JSON.stringify({
         code_int: g.code,
@@ -161,3 +170,6 @@ if (1 < args.files.length) {
   });
 
 }
+
+
+process.exit(has_errors ? 1 : 0);
