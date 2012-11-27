@@ -137,9 +137,9 @@ if (1 < args.files.length) {
 
     duplicates.forEach(function (g) {
       console.log('  - ' + JSON.stringify({
-        filename: g.filename,
         code_int: g.code,
-        code_hex: '0x' + g.code.toString(16)
+        code_hex: '0x' + g.code.toString(16),
+        filename: g.filename
       }));
     });
   });
@@ -153,9 +153,9 @@ if (1 < args.files.length) {
 
     duplicates.forEach(function (g) {
       console.log('  - ' + JSON.stringify({
-        filename: g.filename,
         code_int: g.code,
-        code_hex: '0x' + g.code.toString(16)
+        code_hex: '0x' + g.code.toString(16),
+        filename: g.filename
       }));
     });
   });
