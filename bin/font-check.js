@@ -59,6 +59,7 @@ function findDuplicates(arr, key) {
 ////////////////////////////////////////////////////////////////////////////////
 
 
+var has_errors    = false;
 var found_glyphs  = [];
 var args          = cli.parseArgs();
 
@@ -87,8 +88,13 @@ args.files.forEach(function (filename) {
   //
 
   found_glyphs = found_glyphs.concat(config.glyphs.map(function (glyph) {
-    glyph.filename = filename;
-    return glyph;
+    return {
+      uid:  glyph.uid,
+      css:  glyph.css,
+      code: glyph.code,
+      file: glyph.file,
+      config_file: filename
+    };
   }));
 
   //
@@ -98,11 +104,15 @@ args.files.forEach(function (filename) {
   findDuplicates(config.glyphs, 'uid').forEach(function (duplicates) {
     console.log('Duplicate uid <' + duplicates[0].uid + '> (in: ' + filename + ')');
 
+    has_errors = true;
+
     duplicates.forEach(function (g) {
-      console.log('  - ' + JSON.stringify({
-        code_int: g.code,
-        code_hex: '0x' + g.code.toString(16)
-      }));
+      console.log('  - code:   ' + '0x' + g.code.toString(16));
+      console.log('    css:    ' + g.css);
+
+      if (g.file) {
+        console.log('    file:   ' + g.file);
+      }
     });
   });
 
@@ -113,11 +123,15 @@ args.files.forEach(function (filename) {
   findDuplicates(config.glyphs, 'css').forEach(function (duplicates) {
     console.log('Duplicate css <' + duplicates[0].css + '> (in: ' + filename + ')');
 
+    has_errors = true;
+
     duplicates.forEach(function (g) {
-      console.log('  - ' + JSON.stringify({
-        code_int: g.code,
-        code_hex: '0x' + g.code.toString(16)
-      }));
+      console.log('  - code:   ' + '0x' + g.code.toString(16));
+      console.log('    css:    ' + g.css);
+
+      if (g.file) {
+        console.log('    file:   ' + g.file);
+      }
     });
   });
 });
@@ -135,29 +149,21 @@ if (1 < args.files.length) {
   findDuplicates(found_glyphs, 'uid').forEach(function (duplicates) {
     console.log('Duplicate uid <' + duplicates[0].uid + '>');
 
-    duplicates.forEach(function (g) {
-      console.log('  - ' + JSON.stringify({
-        code_int: g.code,
-        code_hex: '0x' + g.code.toString(16),
-        filename: g.filename
-      }));
-    });
-  });
-
-  //
-  // check for duplicate name's
-  //
-
-  findDuplicates(found_glyphs, 'css').forEach(function (duplicates) {
-    console.log('Duplicate css <' + duplicates[0].css + '>');
+    has_errors = true;
 
     duplicates.forEach(function (g) {
-      console.log('  - ' + JSON.stringify({
-        code_int: g.code,
-        code_hex: '0x' + g.code.toString(16),
-        filename: g.filename
-      }));
+      console.log('  - code:   ' + '0x' + g.code.toString(16));
+      console.log('    css:    ' + g.css);
+
+      if (g.file) {
+        console.log('    file:   ' + g.file);
+      }
+
+      console.log('    from:   ' + g.config_file);
     });
   });
 
 }
+
+
+process.exit(has_errors ? 1 : 0);
