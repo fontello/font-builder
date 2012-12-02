@@ -27,8 +27,7 @@ $(TTFAUTOHINT_BIN):
 		git submodule init && \
 		git submodule update && \
 		./bootstrap ; \
-		./configure --without-qt && \
-		make
+		./configure --with-qt=no --with-doc=no && make
 
 
 dev-deps:
@@ -39,8 +38,7 @@ dev-deps:
 	apt-get -qq install \
 		fontforge python python-fontforge libfreetype6-dev \
 		python-yaml python-pip \
-		build-essential \
-		autoconf automake libtool
+		build-essential autoconf automake libtool
 	pip -q install pystache argparse
 
 
