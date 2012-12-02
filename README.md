@@ -17,6 +17,21 @@ in [fontello](https://github.com/fontello) repos:
 - https://github.com/fontello/websymbols-uni.font
 
 
+Installation
+------------
+
+You MUST have node.js 0.8+ installed. In Ubuntu 12.04+, just clone repo and
+run in command line:
+
+    sudo make dev-deps
+    make support
+    sudo make support-install
+    npm install
+
+You can skip `support-install` step, if you don't need to install ttfautohint
+& ttf2eot globally. 
+
+
 Licence info
 ------------
 
