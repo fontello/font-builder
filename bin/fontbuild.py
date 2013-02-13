@@ -6,7 +6,7 @@ import argparse
 import yaml
 import fontforge
 
-KERNING = 15
+KERNING = 0
 
 parser = argparse.ArgumentParser(description='Font builder tool')
 parser.add_argument('-c', '--config', type=str, help='Config example: ../config.yml', required=True)
@@ -44,8 +44,11 @@ for glyph in config['glyphs']:
     f = glyph.get('file', glyph.get('css'))
 
     c.importOutlines(args.svg_dir + '/' + f + '.svg')
-    #c.left_side_bearing = KERNING
-    #c.right_side_bearing = KERNING
+
+    # DON'T REMOVE 2 strings below, or it will break
+    # width of imported glyphs. Just set KEGNING=0 instead.
+    c.left_side_bearing = KERNING
+    c.right_side_bearing = KERNING
 
     # small optimization, should not affect quality
     c.simplify()
