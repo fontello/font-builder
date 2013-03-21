@@ -33,7 +33,8 @@ You can skip `support-install` step, if you don't need to install ttfautohint
 
 ### OS X
 
-OS X users can use this, too. Make sure you have Python and [Homebrew](http://mxcl.github.com/homebrew/) installed.
+OS X users can use this, too. Make sure you have [Homebrew](http://mxcl.github.com/homebrew/) 
+installed.
 
 Then, run:
 	
@@ -41,6 +42,7 @@ Then, run:
 	make support-osx
 	npm install
 
+This installs Python, pip, and some other build dependencies. 
 This _will_ globally install ttfautohint & ttf2eot.
 
 Licence info

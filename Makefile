@@ -42,8 +42,8 @@ $(TTFAUTOHINT_BIN):
 
 
 dev-deps:
-
 	@if [[ $(PLATFORM) = "Darwin" ]]; then \
+		brew install python ; \
 		brew install fontforge ; \
 		sudo ln -s /opt/X11/lib/libfreetype.6.dylib /usr/local/lib/libfreetype.6.dylib ; \
 		brew tap sampsyo/py ; \
