@@ -31,6 +31,19 @@ run in command line:
 You can skip `support-install` step, if you don't need to install ttfautohint
 & ttf2eot globally. 
 
+### OS X
+
+OS X users can use this, too. Make sure you have [Homebrew](http://mxcl.github.com/homebrew/) 
+installed.
+
+Then, run:
+	
+	make dev-deps
+	make support-osx
+	npm install
+
+This installs Python, pip, and some other build dependencies. 
+This _will_ globally install ttfautohint & ttf2eot.
 
 Licence info
 ------------
