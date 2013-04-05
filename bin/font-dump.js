@@ -2,18 +2,21 @@
 
 'use strict';
 
-var fs = require('fs'),
-    path = require('path'),
-    crypto = require('crypto'),
-    _ = require('underscore'),
-    yaml = require('yamljs'),
-    shredder = require('../lib/shredder'),
-    svg_template =
-      '<svg height="${height}px" width="${width}px"' +
-        ' xmlns="http://www.w3.org/2000/svg">' + "\n" +
-        '    <path d="${path}" transform="${transform}" />' + "\n" +
-      '</svg>',
-    ArgumentParser = require('argparse').ArgumentParser;
+var fs = require('fs');
+var path = require('path');
+var crypto = require('crypto');
+var _ = require('underscore');
+var yaml = require('yamljs');
+var font_dump = require('../lib/font-dump');
+var Svgo = require('svgo');
+var ArgumentParser = require('argparse').ArgumentParser;
+
+var svg_template =
+    '<svg height="${height}px" width="${width}px"' +
+      ' xmlns="http://www.w3.org/2000/svg">' + "\n" +
+      '    <path d="${path}" transform="${transform}" />' + "\n" +
+    '</svg>';
+
 
 var parser = new ArgumentParser({
   version: '0.0.1',
@@ -76,10 +79,11 @@ var args = parser.parseArgs(),
       vcenter: args.vcenter,
     };
 
-shredder(params, function(glyphs) {
+font_dump(params, function(glyphs) {
 
   var config,
-      diff = [];
+      diff = [],
+      svgo = new Svgo();
 
   if (args.config) {
     config = yaml.load(args.config);
@@ -119,8 +123,6 @@ shredder(params, function(glyphs) {
     }
 
     // Completely new glyph
-    //
-    console.log((glyph.unicode.toString(16)) + ' - NEW glyph, writing...');
 
     glyph_out = {
       css: glyph.name,
@@ -129,7 +131,13 @@ shredder(params, function(glyphs) {
       search: []
     }
 
-    fs.writeFileSync(path.join(params.glyphs_dir, glyph.name + '.svg'), glyph.svg);
+    console.log((glyph.unicode.toString(16)) + ' - NEW glyph, writing...');
+
+    svgo.fromString(glyph.svg)
+      .then(function(result) {
+        fs.writeFile(path.join(params.glyphs_dir, glyph.name + '.svg'), result.data);
+      })
+      .done();
 
     diff.push(glyph_out);
 
