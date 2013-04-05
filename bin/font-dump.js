@@ -24,20 +24,6 @@ var parser = new ArgumentParser({
   description: 'Dump glyphs from font'
 });
 parser.addArgument(
-  ['--hcrop'],
-  {
-    help: 'Crop free space from left and right',
-    action: 'storeTrue'
-  }
-);
-parser.addArgument(
-  ['--vcenter'],
-  {
-    help: 'Realign glyphs vertically',
-    action: 'storeTrue'
-  }
-);
-parser.addArgument(
   [ '-c', '--config' ],
   {
     help: 'Font config file'
@@ -133,11 +119,7 @@ font_dump(params, function(glyphs) {
 
     console.log((glyph.unicode.toString(16)) + ' - NEW glyph, writing...');
 
-    svgo.fromString(glyph.svg)
-      .then(function(result) {
-        fs.writeFile(path.join(params.glyphs_dir, glyph.name + '.svg'), result.data);
-      })
-      .done();
+    fs.writeFile(path.join(params.glyphs_dir, glyph.name + '.svg'), glyph.svg);
 
     diff.push(glyph_out);
 
